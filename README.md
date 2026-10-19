@@ -79,4 +79,4 @@ Output paths are interpreted relative to the current working directory. Ensure t
 
 ## GitHub Actions
 
-The workflow in `.github/workflows/build.yml` builds MG and runs a 100-event `EMMAtest0` smoke test. It uses the LCG view and CVMFS data paths above, so it requires a self-hosted GitHub Actions runner with CVMFS mounted and the `self-hosted`, `linux`, `x64`, and `lcg-110` labels. It is not configured for GitHub-hosted runners.
+The workflow in `.github/workflows/build.yml` builds MG, runs a 100-event `EMMAtest0` smoke test, and renders the detector headlessly to `detector-visualization.pdf` using Geant4's ToolsSG off-screen driver. The PDF is uploaded as a workflow artifact. It uses the LCG view and CVMFS data paths above, so it requires a self-hosted GitHub Actions runner with CVMFS mounted and the `self-hosted`, `linux`, `x64`, and `lcg-110` labels. It is not configured for GitHub-hosted runners.

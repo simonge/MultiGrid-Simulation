@@ -30,3 +30,21 @@ jobs:
           rm -f "${output}"
           ./build/MG --preset EMMAtest0 --output "${output}"
           test -s "${output}"
+
+      - name: Render detector visualization directly to PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
+          export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
+          rm -f detector-visualization.pdf
+          ./build/MG --geometry macros/EMMAtest0.dat --macro macros/ci-visualization.mac
+          test -s detector-visualization.pdf
+
+      - name: Upload detector visualization PDF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mg-detector-visualization
+          path: detector-visualization.pdf
+          if-no-files-found: warn

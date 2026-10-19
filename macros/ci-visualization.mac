@@ -1,0 +1,12 @@
+/control/verbose 0
+/run/verbose 0
+/vis/verbose errors
+/run/initialize
+/vis/open TSG_OFFSCREEN
+/vis/tsg/offscreen/set/format gl2ps_pdf
+/vis/tsg/offscreen/set/file detector-visualization.pdf
+/vis/drawVolume
+/vis/viewer/set/background white
+/vis/viewer/set/viewpointThetaPhi 90 90
+/vis/viewer/zoom 5.0
+/vis/viewer/flush
