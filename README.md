@@ -76,3 +76,7 @@ For example, run the EMMA macro while choosing a new output file and seed:
 `--output` takes precedence over output-file commands in the macro. `--events` runs directly without a macro and therefore cannot be combined with `--macro` or a preset that selects a macro. Use the macro when you need its source, detector, or physics configuration.
 
 Output paths are interpreted relative to the current working directory. Ensure the destination directory exists before starting a run.
+
+## GitHub Actions
+
+The workflow in `.github/workflows/build.yml` builds MG and runs a 100-event `EMMAtest0` smoke test. It uses the LCG view and CVMFS data paths above, so it requires a self-hosted GitHub Actions runner with CVMFS mounted and the `self-hosted`, `linux`, `x64`, and `lcg-110` labels. It is not configured for GitHub-hosted runners.

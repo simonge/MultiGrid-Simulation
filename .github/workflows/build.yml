@@ -1,0 +1,32 @@
+name: Build and smoke test MG
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-and-smoke-test:
+    # Requires a self-hosted runner with CVMFS mounted and the LCG view below.
+    runs-on: [self-hosted, linux, x64, lcg-110]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure and build
+        shell: bash
+        run: |
+          set -euo pipefail
+          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
+          export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
+          ./setup.sh
+
+      - name: Run 100-event smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
+          export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
+          output="${RUNNER_TEMP}/mg-ci-smoke.root"
+          rm -f "${output}"
+          ./build/MG --preset EMMAtest0 --output "${output}"
+          test -s "${output}"

@@ -1,0 +1,30 @@
+/MG/phys/verbose 0
+#/MG/gun/Mode 1
+#/run/initialize
+/control/verbose 0
+/tracking/verbose 0
+/event/verbose 0
+/MG/analysis/setOutputFile /scratch/jrma/MG/ncrys_EMMAtest0_1.root
+#/MG/analysis/setOutputFile output/test1.root
+/run/verbose 0
+#
+/gun/particle neutron
+#/gps/energy 0.005 eV
+#/gps/position 1.125 1.2 0.0 cm 
+#/gps/position 0 0 -100 cm 
+#/gps/direction 0 0 1
+#/gps/pos/type Plane
+#/gps/pos/shape Rectangle
+#/gps/pos/halfx 1.125 cm
+#/gps/pos/halfy 0.01 cm
+#/gps/pos/halfz 0.01 cm
+#/gps/pos/halfx 0.5 cm
+#/gps/pos/halfy 0.5 cm
+#/gps/pos/halfz 0.01 cm
+#/gps/ang/type iso
+#/gps/ang/mintheta 0 deg
+#/gps/ang/maxtheta 2.5 deg
+#/gps/ang/minphi 0 deg
+#/gps/ang/maxphi 5 deg
+#/run/beamOn 20000000
+/run/beamOn 100

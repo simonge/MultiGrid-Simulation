@@ -1,0 +1,97 @@
+# Input parameters for Multigrid detector
+# Dimensions in mm
+# MG_EMMA prototypes @ EMMA, ISIS
+## Moderator -> front voxel 16.323 m
+## Moderator -> beam Monitor 16.1 m
+## Moderator -> collimator 16.05 m
+## Moderator -> He3 16.19 - 0.05 m
+## Moderator -> Fermi chopper 10 m approx
+# Specify simulation run mode and Physics model.
+# 0 Optical transport only
+# 1 Fast neutron/gamma/alpha, no optical
+# 2 Fast neutron/gamma/alpha, with optical
+# 3 Thermal neutron, no optical
+# 4 Thermal neutron, with optical
+# FTFP_BERT_HP
+# QGSP_BERT_HP
+# QGSP_BIC_HP
+# NoHadronic
+#Run-Mode: 3 FTFP_BERT_HP
+Run-Mode: 3 QGSP_BIC_HP
+#Run-Mode: 3 QGSP_BERT_HP
+#
+## Experimental Volume dimensions and material 0=vac 1=air STP
+## Concrete thickness (mm opt)
+#World: 1700 1700 6650 1
+World: 1950 1000 6650 1
+#
+# x0,y0,z0,1/2dx0,1/2dy0,1/2dz0(mm), lamda(A), flight path(mm), chop-opening(us)
+## upstream of target
+## Set Lambda -9999 to use energy hist, -x for flat dist 0 to x
+## Skew currently uses inverted Landau distribution
+#Chopper: 11.75 12.0 -6000.0 3.0 3.0 0.0 1.065 10050 2.0 -5.0
+#Chopper: 0.0 0.0 -6000.0 3.0 3.0 0.0 -9999 10050 10.0 -5.0
+Chopper: 0.0 0.0 -6470.0 10.1 5.1 0.0 1.065 10050 2.0 -5.0
+#
+# Specify histogram from which sample starting energy (Lambda in this case)
+# Root file name and name of 1D histogram
+# Not used here
+#Energy-Hist: macros/Hist_EMMA_27876.root hemp
+Energy-Hist: macros/Lambda1.065a.root hl00
+#
+## #x cells, #y grids, #zcells, cell 1/2 x-len, 1/2 y-len, 1/2 z-len,
+## 1/2 normal bladethick, grid y-space, 1/2 radial blade thick. All in mm
+#MG-Dim:  6 12 20 11.75 12.0 4.75 0.25 1.0 0.25
+MG-Dim:  6 12 20 11.75 12.0 4.75 0.25 1.0 0.25 0 0.525 1
+#He3-Dim: 1 12.7 2000 0.5 10.0
+## B4C coating
+## Side blades 0.000mm, 0.001mm to #7, 0.0012mm to #11, 0.0017mm to #17, rest 0.002mm 
+B4C-Thick: 0.000 7 0.001 11 0.0012 17 0.0017 0.002
+## Test scattering sample x,y,z 1/2 dimensions, angle w.r.t beam
+## Material 1:BorAl 2:Al 3:B4Ce 4:Cr 5:NatB4C 6:Ni 7:B4Ce-epoxy(MB) 8:BorNi 9:B10 10:BorAl spray  11:He3  12:ArCO2
+Scatter: 0 0 0 0.0 0.0 0.0 0.0 6
+Scatter: 0 0 0 0.025 0.0 0.0 0.0 1
+## 10B fraction, Al-mix, Drip-mix, Ni-mix, Al-mix spray
+## Al-mix: 0.69(boral), 0.52(spray)
+B10frac: 0.97 0.69 0.738 0.779 0.52
+##
+## Vessel internal dimensions and thickness
+## Nvess,Radius,dTheta,Theta0,Sx,Sy,Sz,Vth,Vbk, ThGap,NvGap,ThGap1,NvGap1,Vfr
+#Vessel: 1 273 2.92 0.00 130 250 118 5 28  0.0 0 0.28 6 2.0
+Vessel: 1 1000 2.92 90.0 130 250 118 5 28  0.0 0 0.28 6 2.0
+## EMMA test hack
+EMMA-Test: 1042 180 0 1042 -180 0 90 0 90.0
+#EMMA-Test: 1100 -136 0 1100 136 0 90.0
+#EMMA-Test: 1100 0 -130 1100 0 146 0.0
+##      sp0, sp1,z1, x2,  z2,  x3,  z3
+#T-Rex: -40.0 3.0 8.5 50.0 12.5 17.5 12.5
+#T-Rex: -40.0 0.0 8.5 50.0 12.5 17.5 12.5
+Column: 1 6.0
+## Polycrystaline Al
+Crys-Material:
+## Shielding sheets rear 1/2 thickness side 1/2 thickness,
+## rear block 1/2 thickness materials (as in Scatter)
+#Shield: 1.5 0.0 6.0 12 1 2
+Shield: 1.5 0.0 6.0 12 1 2 1 1 2
+## Ar and CO2 fractions (%), mix density (mg/cm3)
+Gas: 78.4 21.6 1.796
+## Optional Target length and radius (mm) and material
+## Vanadium, Graphite or Polyethylene
+#Target: 20.0 8.0 7.65 Vanadium
+#Target: 0.0 0.0 0.0 Vanadium 50.0 50.0 2.0 45.0
+##Target: 20.0 4.0 0.0 Vanadium
+#Target: 30 10 Graphite
+#Target: 30 10 Polyethylene
+## Colli    Pos(mm) Size (mm)   Hole(mm) Material Wall th & 2nd-wall-z (opt)
+#Collimator: 11.75 12.0 0  300 500 5.0  2.0 2.0 5 
+Collimator: 0.0 0.0 -470.0  50.0 40.0 5.0 10.0 5.0 5 125.0 1000.0
+#Collimator: 0.0 0.0 -600  50 50 5.0 8.0 19.0 5 0 0
+## Beam Monitor pos        size            Li glass GS1(13)
+#Beam-Monitor: 0.0 0.0 6.0  25.0 25.0 0.125 13
+Beam-Monitor: 0.0 0.0 -420.0  12.5 12.5 0.125 13
+EMMA-Shield: 1400 0 50 20 500 500 0.0 0.0 275 260 0.5 75 20 5.0 180.0 50.0
+#EMMA-Shield: 1400 0 50 20 500 500 0.415 0.25 260 275
+#EMMA-Shield: 1400 0 50 20 500 500 0.45 0.25
+#EMMA-Shield: 1400 0 50 20 500 500 0.0 0.25
+#EMMA-Shield: 1400 100 50 20 500 500 0.45 0.0
+##### end
