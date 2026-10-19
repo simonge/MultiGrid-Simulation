@@ -60,6 +60,7 @@ A preset named `NAME` selects `macros/NAME.mac` and, by default, `macros/NAME.da
 -m, --macro FILE       Execute a Geant4 macro (batch mode)
 -o, --output FILE      Set the ROOT output path; overrides a macro's output setting
 -f, --geometry FILE    Read detector geometry parameters from FILE
+    --export-gdml FILE Export geometry to GDML only (no physics or events)
 -r, --seed INTEGER     Set the random seed (0 chooses a time-based seed)
 -n, --events INTEGER   Run this number of events without a macro
 -u, --session TYPE     Select the Geant4 interactive UI session
@@ -76,6 +77,16 @@ For example, run the EMMA macro while choosing a new output file and seed:
 `--output` takes precedence over output-file commands in the macro. `--events` runs directly without a macro and therefore cannot be combined with `--macro` or a preset that selects a macro. Use the macro when you need its source, detector, or physics configuration.
 
 Output paths are interpreted relative to the current working directory. Ensure the destination directory exists before starting a run.
+
+### Export detector geometry to ROOT
+
+With MG built and the Geant4/ROOT environment loaded, export a detector geometry to a ROOT `TGeoManager` file with:
+
+```bash
+./scripts/export_geometry_root.sh macros/EMMAtest0.dat output/EMMAtest0-geometry.root
+```
+
+The script exports Geant4 geometry to a temporary GDML file, imports it with ROOT, and writes the geometry to the requested `.root` file. The `--export-gdml` mode constructs the detector geometry and exits before creating the physics list, initializing physics, or running events. It can also be used directly with `./build/MG --geometry macros/EMMAtest0.dat --export-gdml output/EMMAtest0.gdml`. This is geometry-only; simulation hits remain in the regular MG output file and are not copied or overlaid.
 
 ## GitHub Actions
 

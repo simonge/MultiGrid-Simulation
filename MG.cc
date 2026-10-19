@@ -10,6 +10,7 @@
 
 //#include "NXSG4.hh"
 #include "G4NCrystal/G4NCrystal.hh"
+#include "G4GDMLParser.hh"
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
 #include "PhysicsList.hh"
@@ -34,6 +35,7 @@
 #endif
 
 #include <exception>
+#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -82,6 +84,22 @@ int main(int argc,char** argv)
     dc = new DetectorConstruction();
 
   runManager-> SetUserInitialization(dc);
+
+  if (!options.gdmlOutputFile.empty()) {
+    runManager->InitializeGeometry();
+    G4GDMLParser gdmlParser;
+    gdmlParser.Write(options.gdmlOutputFile, dc->GetWorldVolume());
+    std::ifstream gdmlFile(options.gdmlOutputFile, std::ios::binary | std::ios::ate);
+    if (!gdmlFile || gdmlFile.tellg() == std::streampos(0)) {
+      G4cerr << "Failed to write GDML geometry to "
+             << options.gdmlOutputFile << G4endl;
+      delete runManager;
+      return 1;
+    }
+    delete runManager;
+    return 0;
+  }
+
   // Physics list
   runManager-> SetUserInitialization(new PhysicsList(dc));
   // User action initialization
@@ -150,4 +168,3 @@ int main(int argc,char** argv)
 
   return 0;
 }
-

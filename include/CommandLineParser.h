@@ -14,6 +14,7 @@ struct CommandLineOptions {
   std::string macro;
   std::string session;
   std::string geometryFile;
+  std::string gdmlOutputFile;
   std::string outputFile;
   std::string preset;
   long seed = 0;
@@ -71,6 +72,8 @@ inline CommandLineOptions ParseCommandLine(int argc, char** argv)
     } else if (option == "-f" || option == "--geometry") {
       options.geometryFile = RequireValue(i, argc, argv, option, inlineValue, hasInlineValue);
       hasGeometry = true;
+    } else if (option == "--export-gdml") {
+      options.gdmlOutputFile = RequireValue(i, argc, argv, option, inlineValue, hasInlineValue);
     } else if (option == "-o" || option == "--output") {
       options.outputFile = RequireValue(i, argc, argv, option, inlineValue, hasInlineValue);
       options.hasOutputFile = true;
@@ -92,11 +95,15 @@ inline CommandLineOptions ParseCommandLine(int argc, char** argv)
   }
 
   if (!options.preset.empty()) {
-    if (!hasMacro)
+    if (!hasMacro && options.gdmlOutputFile.empty())
       options.macro = "macros/" + options.preset + ".mac";
     if (!hasGeometry)
       options.geometryFile = "macros/" + options.preset + ".dat";
   }
+  if (!options.gdmlOutputFile.empty()
+      && (hasMacro || options.events >= 0
+          || options.hasOutputFile || !options.session.empty()))
+    throw std::invalid_argument("--export-gdml cannot be combined with a macro, event count, ROOT output, or UI session");
   if (!options.macro.empty() && options.events >= 0)
     throw std::invalid_argument("--events cannot be combined with --macro; event counts belong in the macro");
   return options;
@@ -108,6 +115,7 @@ inline void PrintUsage(std::ostream& output, const char* program)
          << "  -m, --macro FILE       Execute a Geant4 macro (batch mode)\n"
          << "  -o, --output FILE      Write ROOT output to FILE (overrides macro setting)\n"
          << "  -f, --geometry FILE    Read detector geometry parameters from FILE\n"
+         << "      --export-gdml FILE Export initialized geometry to a GDML file\n"
          << "  -r, --seed INTEGER     Set random seed (0 selects a time-based seed)\n"
          << "  -n, --events INTEGER   Run this many events (without a macro)\n"
          << "  -u, --session TYPE     Select the Geant4 interactive UI session\n"

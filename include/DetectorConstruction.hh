@@ -71,6 +71,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   void TRbox();         // TREX box for 6 MG columns
   void CryoStat();      // cryostat around target
   inline DetectorSD*        GetDetSD()  { return fDetSD; }
+  inline G4VPhysicalVolume* GetWorldVolume() const { return fExpPhys; }
   inline G4int GetRunMode(){ return fRunMode; }
   inline G4int GetHadronMode(){ return fHadronMode; }
   inline G4bool IsOptical(){ return fIsOptical; }
