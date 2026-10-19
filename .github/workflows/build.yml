@@ -6,11 +6,19 @@ on:
 
 jobs:
   build-and-smoke-test:
-    # Requires a self-hosted runner with CVMFS mounted and the LCG view below.
-    runs-on: [self-hosted, linux, x64, lcg-110]
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+
+      - name: Install CVMFS
+        uses: cvmfs-contrib/github-action-cvmfs@v4
+
+      - name: Verify CVMFS
+        run: |
+          ls /cvmfs
+          cvmfs_config probe
 
       - name: Configure and build
         shell: bash
