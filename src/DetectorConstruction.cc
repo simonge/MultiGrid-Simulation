@@ -43,18 +43,6 @@
 #include "G4MultiUnion.hh"
 #include "G4NistManager.hh"
 #include "globals.hh"
-// Colours
-G4VisAttributes* black   = new G4VisAttributes( G4Colour(0.0,0.0,0.0) );
-G4VisAttributes* white   = new G4VisAttributes( G4Colour(1.0,1.0,1.0) );
-G4VisAttributes* red     = new G4VisAttributes( G4Colour(1.0,0.0,0.0) );
-G4VisAttributes* blue    = new G4VisAttributes( G4Colour(0.0,0.0,1.0) );
-G4VisAttributes* purple  = new G4VisAttributes( G4Colour(1.0,0.0,1.0) );
-G4VisAttributes* green   = new G4VisAttributes( G4Colour(0.0,1.0,0.0) );
-G4VisAttributes* grey    = new G4VisAttributes( G4Colour(0.5,0.5,0.5) );
-G4VisAttributes* yellow  = new G4VisAttributes( G4Colour(1.0,1.0,0.0) );
-G4VisAttributes* cyan    = new G4VisAttributes( G4Colour(0.0,1.0,1.0) );
-
-G4double pixd[] = {6.25, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.25};
 FILE* CoordFile;
 
 DetectorConstruction::DetectorConstruction(const char* readfile)
@@ -175,22 +163,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //---------------------------------------------------------------------------
   //World
   //fExpLog->SetVisAttributes(G4VisAttributes(false));
-  fExpLog->SetVisAttributes(black);
+  fExpLog->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   // Grid
   for(G4int n=0; n<fNmg; n++){
     //if(flogMG[n])
-    //flogMG[n]->SetVisAttributes(black);
+    //flogMG[n]->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     if(flogVess[n])
-      flogVess[n]->SetVisAttributes(black);
+      flogVess[n]->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     if(flogVGas[n])
-      flogVGas[n]->SetVisAttributes(black);
+      flogVGas[n]->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   }
   if(flogTarget)
-    flogTarget->SetVisAttributes(black);
+    flogTarget->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   if(fNHe3){
-    flogHe3->SetVisAttributes(cyan);
-    flogTube->SetVisAttributes(black);
-    flogWire->SetVisAttributes(black);
+    flogHe3->SetVisAttributes(G4VisAttributes(G4Colour::Cyan()));
+    flogTube->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+    flogWire->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   }
 
 //always return the physical World
@@ -270,7 +258,7 @@ void DetectorConstruction::EMMAtest()
   yR->rotateY(fETry*deg);
   yR->rotateX(fETrx*deg);
   auto lMBs = new G4LogicalVolume(vMBs,fMB,"lMBs",0,0,0);
-  lMBs->SetVisAttributes(red);
+  lMBs->SetVisAttributes(G4VisAttributes(G4Colour::Red()));
   for(G4int n=0; n<fNvess; n++){
     flogVess[n] = new G4LogicalVolume(vBox,fAl,"vLog",0,0,0);
     flogVGas[n] = new G4LogicalVolume(vgBox,fArCO2,"vgLog",0,0,0);
@@ -313,7 +301,7 @@ void DetectorConstruction::Target(){
 	G4Material* tmat = fScMatList[fmTgMat[n]-1];
 	auto tb = new G4Box("tb",fmTgSx[n],fmTgSy[n],fmTgSz[n]);
 	auto ltb = new G4LogicalVolume(tb,tmat,"ltb",0,0,0);
-	ltb->SetVisAttributes(black);
+	ltb->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
 	new G4PVPlacement(0,G4ThreeVector(0,0,z0),ltb,"ptb",flogTarget,
 			  false,10);
 	z0 += fmTgSz[n] + fmTgSz[n+1];
@@ -349,7 +337,7 @@ void DetectorConstruction::CryoStat(){
     auto cr = new G4Tubs(nam,ir[i],ir[i]+irw0,ir[i],0.0,360*deg);
     sprintf(nam,"lcr%d",i);
     auto lcr = new G4LogicalVolume(cr,fAl,nam,0,0,0);
-    lcr->SetVisAttributes(red);
+    lcr->SetVisAttributes(G4VisAttributes(G4Colour::Red()));
     sprintf(nam,"pcr%d",i);
     new G4PVPlacement(rot,G4ThreeVector(0,0,0),lcr,nam,fExpLog,false,0);
     //
@@ -357,7 +345,7 @@ void DetectorConstruction::CryoStat(){
     auto cra = new G4Tubs(nam,ir[i],ir[i]+irw1,irl,0.0,360*deg);
     sprintf(nam,"lcra%d",i);
     auto lcra = new G4LogicalVolume(cra,fAl,nam,0,0,0);
-    lcra->SetVisAttributes(blue);
+    lcra->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
     sprintf(nam,"pcra%d",i);
     G4double yoff = ir[i] + irl;
     new G4PVPlacement(rot,G4ThreeVector(0,-yoff,0),lcra,nam,fExpLog,false,0);
@@ -365,7 +353,7 @@ void DetectorConstruction::CryoStat(){
     auto enda = new G4Tubs(nam,0,ir[i]+irw1,endl,0.0,360*deg);
     sprintf(nam,"lend%d",i);
     auto lenda = new G4LogicalVolume(enda,fAl,nam,0,0,0);
-    lenda->SetVisAttributes(blue);
+    lenda->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
     yoff += irl + endl;
     sprintf(nam,"pend%d",i);
     new G4PVPlacement(rot,G4ThreeVector(0,-yoff,0),lenda,nam,fExpLog,false,0);
@@ -375,14 +363,14 @@ void DetectorConstruction::CryoStat(){
     auto crb = new G4Tubs(nam,ir[i],ir[i]+irw1,irlb,0.0,360*deg);
     sprintf(nam,"lcrb%d",i);
     auto lcrb = new G4LogicalVolume(crb,fAl,nam,0,0,0);
-    lcrb->SetVisAttributes(blue);
+    lcrb->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
     sprintf(nam,"pcrb%d",i);
     yoff = ir[i]+irlb;
     new G4PVPlacement(rot,G4ThreeVector(0,yoff,0),lcrb,nam,fExpLog,false,0);
   }
   auto endt = new G4Tubs("endt",0,irt,irl2,0.0,360*deg);
   auto lendt = new G4LogicalVolume(endt,fAl,"lendt",0,0,0);
-  lendt->SetVisAttributes(blue);
+  lendt->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
   new G4PVPlacement(rot,G4ThreeVector(0,irl1+irl2,0),lendt,"pendt",fExpLog,false,0);
 }
 
@@ -459,7 +447,7 @@ void DetectorConstruction::MultiGrid(G4int nmg, G4LogicalVolume* lgas,
     fGry = fNy*(fMGy + fMGsp);
     auto bxCol = new G4Box("bxCol",fGrx,fGry,fGrz);
     flogMG[nmg] = new G4LogicalVolume(bxCol,fArCO2,"lbxCol",0,0,0);
-    flogMG[nmg]->SetVisAttributes(red); 
+    flogMG[nmg]->SetVisAttributes(G4VisAttributes(G4Colour::Red()));
     
     fphysMG = new G4VPhysicalVolume*[fNy];
     G4int nn = fNy/2;
@@ -546,7 +534,7 @@ void DetectorConstruction::Grid(G4double mgthr, G4int isScat)
   G4double gz = fNz*(fMGz + fMGth);
   G4Box* bx1 = new G4Box("bx1",gx+mgthr,fMGy,gz+fMGth);
   flogGrid = new G4LogicalVolume(bx1,fAl,"lGrid",0,0,0);
-  flogGrid->SetVisAttributes(black);
+  flogGrid->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   G4Box* bx2 = new G4Box("bx2",fMGx,fMGy,fMGz);
   G4Box* bx3[nVxSz];
   G4Box* bx4[4] = {NULL};
@@ -560,9 +548,9 @@ void DetectorConstruction::Grid(G4double mgthr, G4int isScat)
       bx4[im] = new G4Box("bx2",sx,fMGy,gz+fMGth);
       logbx4[im] = new G4LogicalVolume(bx4[im],fScatMat[im],"radiallog",0,0,0);
       if(im==0)
-	logbx4[im]->SetVisAttributes(black);
+	logbx4[im]->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
       else
-	logbx4[im]->SetVisAttributes(black);
+	logbx4[im]->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
       if(im > 0)
 	new G4PVPlacement(0,G4ThreeVector(0,0,0),logbx4[im],"RadPhys1",
 			  logbx4[im-1],false,0);
@@ -571,12 +559,12 @@ void DetectorConstruction::Grid(G4double mgthr, G4int isScat)
   if(flogbx2[0] == NULL){
     for(G4int i=0; i<nVxSz; i++){
       flogbx2[i] = new G4LogicalVolume(bx2,fB4Ce,"b4clog",0,0,0);
-      flogbx2[i]->SetVisAttributes(black);
+      flogbx2[i]->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
       G4double z = fMGz - (fBt1[i] + fBt2[i])*0.5;
       G4double dz = -0.5*(fBt2[i] - fBt1[i]);
       bx3[i] = new G4Box("bx3",fMGx-fBthx,fMGy,z);
       flogArCO2[i] = new G4LogicalVolume(bx3[i],fArCO2,"ArCO2log",0,0,0);
-      flogArCO2[i]->SetVisAttributes(black);
+      flogArCO2[i]->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
       new G4PVPlacement(0,G4ThreeVector(0,0,dz),flogArCO2[i],"ArCO2phys",
 			flogbx2[i],false,1000);
     }
@@ -646,13 +634,13 @@ void DetectorConstruction::TRbox()
   // box will be placed in this mother volume
   auto mggas = new G4Trd("mggas",x1i,xi,by+2*tp2,by+2*tp2,dzt);
   auto lmggas = new G4LogicalVolume(mggas,fArCO2,"lmggas",0,0,0);
-  lmggas->SetVisAttributes(cyan);
+  lmggas->SetVisAttributes(G4VisAttributes(G4Colour::Cyan()));
   // top/bottom plate
   auto tbp0 = new G4Trd("tbp0",x1i,xi,tp2,tp2,dzt);
   auto tbp1 = new G4Trd("tbp1",x1i-tp1,xi-tp1,tp2,tp2,dzt-tp1);
   auto tbp=new G4SubtractionSolid("tbp",tbp0,tbp1,0,G4ThreeVector(0,tp3,0));
   auto ltbp = new G4LogicalVolume(tbp,fAl,"ltbp",0,0,0);
-  ltbp->SetVisAttributes(blue);
+  ltbp->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
   // Start building box as a multi-union shape
   auto FrontP = new G4Tubs("FrontP",r0,r1,wy,thmin,thr); // front window
   auto BackP = new G4Box("BackP",bx,by,bz);              // back plate
@@ -702,7 +690,7 @@ void DetectorConstruction::TRbox()
   //auto trboxb = trboxa->CreatePolyhedron();
   auto ltrbox = new G4LogicalVolume(trboxa,fAl,"ltrbox",0,0,0);
   //auto ltrbox = new G4LogicalVolume(trbox,fAl,"ltrbox",0,0,0);
-  ltrbox->SetVisAttributes(blue);
+  ltrbox->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
   new G4PVPlacement(0,G4ThreeVector(0,0,+dzt-bz),ltrbox,
 		      "ptrbox",lmggas,false,0);
   // Add MG mounting assy on box
@@ -711,10 +699,10 @@ void DetectorConstruction::TRbox()
   auto cars = new G4SubtractionSolid("cars",car1,car2,0,G4ThreeVector(0,0,cz));
   auto lcar1 = new G4LogicalVolume(cars,fAl,"lcars",0,0,0);
   //auto rail1 = new G4Box("rail1",rlx*2,rly+5,rlz1);
-  lcar1->SetVisAttributes(red);
+  lcar1->SetVisAttributes(G4VisAttributes(G4Colour::Red()));
   auto bb = new G4Box("backbone",bbx,bby,bbz);
   auto lbb = new G4LogicalVolume(bb,fAl,"lbackbone",0,0,0);
-  lbb->SetVisAttributes(blue);
+  lbb->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
   G4RotationMatrix rotm3 = G4RotationMatrix();
   G4RotationMatrix rotm4 = G4RotationMatrix();
   th = -2.5*fdTh;
@@ -745,7 +733,7 @@ void DetectorConstruction::TRbox()
     rlz1 = rlz - rlx*tan(th);
     auto rail = new G4Trap("rail",2*rly,2*rlx,2*rlz,2*rlz1);
     lrail[i] = new G4LogicalVolume(rail,fAl,"lrail",0,0,0);
-    lrail[i]->SetVisAttributes(blue);
+    lrail[i]->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
     auto rotr = new G4RotationMatrix();
     rotr->rotateY(-90*deg);
     rotr->rotateX(90*deg);
@@ -790,7 +778,7 @@ void DetectorConstruction::TRbox()
     G4int nsw;
     auto shbx = new G4Box("shbx",fShTh,by,vnz);
     auto lshbx = new G4LogicalVolume(shbx,fScMatList[fShMat-1],"lshbx",0,0,0);
-    lshbx->SetVisAttributes(green);
+    lshbx->SetVisAttributes(G4VisAttributes(G4Colour::Green()));
     //r5 += dr0+10;
     r5 -= vnz + 120;
     G4double dth = 0.5*(fThBox[1]-fThBox[0]);
@@ -838,9 +826,9 @@ void DetectorConstruction::Trex()
   flogTR2 = new G4LogicalVolume(trb2,fAl,"ltrb2",0,0,0);
   G4Box* trb3 = new G4Box("trb3",fTRx3,sy,fTRz3);
   flogTR3 = new G4LogicalVolume(trb3,fAl,"ltrb3",0,0,0);
-  flogTR1->SetVisAttributes(blue);
-  flogTR2->SetVisAttributes(blue);
-  flogTR3->SetVisAttributes(blue);
+  flogTR1->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
+  flogTR2->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
+  flogTR3->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
 }
   
 //---------------------------------------------------------------------------
@@ -862,13 +850,13 @@ void DetectorConstruction::Shield(G4int nmg)
     fMposz = fNz*(fMGz + fMGth) + fMBth2 + fMGth;
     G4Box* box = new G4Box("Shield",sx,fMGy,fMBth);
     G4LogicalVolume* logMB = new G4LogicalVolume(box,mb,"lShield",0,0,0);
-    logMB->SetVisAttributes(purple);
+    logMB->SetVisAttributes(G4VisAttributes(G4Colour::Magenta()));
     sx += 2*mgthr;
     G4Box* box2 = new G4Box("RBlock",sx,fMGy,fMBth2);
     flogMB = new G4LogicalVolume(box2,mb2,"lRBlock",0,0,0);
     new G4PVPlacement(0,G4ThreeVector(0,0,fMBth-fMBth2),logMB,
 		      "pShield",flogMB,false,10000);
-    flogMB->SetVisAttributes(black);
+    flogMB->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   }
   // side shield
   if(fMBth1){
@@ -876,7 +864,7 @@ void DetectorConstruction::Shield(G4int nmg)
     fMposx = fNx*(fMGx + mgthr) + fMBth1 + mgthr;
     G4Box* box1 = new G4Box("Shield1",fMBth1,fMGy,sz);
     flogMB1 = new G4LogicalVolume(box1,mb1,"lShield1",0,0,0);
-    flogMB1->SetVisAttributes(purple);
+    flogMB1->SetVisAttributes(G4VisAttributes(G4Colour::Magenta()));
   }
 }
 //---------------------------------------------------------------------------
@@ -890,7 +878,7 @@ void DetectorConstruction::ScatterTest()
 				   0.0*deg,360*deg,2.5*deg,175*deg);
       flogScDet = new G4LogicalVolume(sph,fScMatList[fScDetMat-1],
 				      "lScDet",0,0,0);
-      flogScDet->SetVisAttributes(black);
+      flogScDet->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     }
     else{
       G4double szAl = 0.5;
@@ -908,9 +896,9 @@ void DetectorConstruction::ScatterTest()
       G4double dz1 = fScDetZ - (szAr + fScDetSz);
       new G4PVPlacement(0,G4ThreeVector(fScDetX,fScDetY,dz1),logScDetB,
 		      "pScDetB",fExpLog,false,0);
-      logScDetA->SetVisAttributes(black); 
-      logScDetB->SetVisAttributes(blue); 
-      flogScDet->SetVisAttributes(cyan);
+      logScDetA->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+      logScDetB->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
+      flogScDet->SetVisAttributes(G4VisAttributes(G4Colour::Cyan()));
     }
     new G4PVPlacement(0,G4ThreeVector(fScDetX,fScDetY,fScDetZ),flogScDet,
 		      "pScDet",fExpLog,false,30);
@@ -930,7 +918,7 @@ void DetectorConstruction::ScatterTest()
       continue;                    // Trex simulation, skip scatter sample
     G4Box* box = new G4Box("Scat",fScX[im],fScY[im],fScZ[im]);
     flogScat[im+1] = new G4LogicalVolume(box,fScatMat[im],name,0,0,0);
-    flogScat[im+1]->SetVisAttributes(black);
+    flogScat[im+1]->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     sprintf(name,"pScat%d",im);
     new G4PVPlacement(yR,G4ThreeVector(fScPx,fScPy,fScPz),flogScat[im+1],name,
 				flogScat[im],false,20+im);
@@ -949,16 +937,16 @@ void DetectorConstruction::Collimator()
     auto cbx0s = new G4SubtractionSolid("Wall",cbx0,cbx0a);
     auto cbx0p = new G4Tubs("Pipe",fColSy,fColSx,2*fWallTh,0,360*deg);
     lcbx0 = new G4LogicalVolume(cbx0s,fConcrete,"lcbx0",0,0,0);
-    lcbx0->SetVisAttributes(black);
+    lcbx0->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     lcbx0p = new G4LogicalVolume(cbx0p,fAl,"lcbx0p",0,0,0);
-    lcbx0p->SetVisAttributes(black);
+    lcbx0p->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   }
   auto cbx1 = new G4Box("ColliBox1",fColSx,fColSx,fColSz);
   auto cbx1a = new G4Box("ColliBox1a",fColHx,fColHy,fColSz);
   auto cbx1s = new G4SubtractionSolid("ColliBox",cbx1,cbx1a);
   auto lcbx1 = new G4LogicalVolume(cbx1s,fScMatList[fColMat-1],
 					      "lcbx1",0,0,0);
-  lcbx1->SetVisAttributes(black);
+  lcbx1->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   //G4double zoff = fColZ - fWallTh + fColSz;
   G4double zoff = fColZ - 2*fWallTh - fColSz;
   if(lcbx0){
@@ -989,7 +977,7 @@ void DetectorConstruction::Collimator()
     //ycub-2.0*fWallTh,lconc);
     G4SubtractionSolid* cbx3s = new G4SubtractionSolid("Wall2",cbx3,cbx3a);
     G4LogicalVolume* lcbx3 = new G4LogicalVolume(cbx3s,fConcrete,"lcbx3",0,0,0);
-    lcbx3->SetVisAttributes(black);
+    lcbx3->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     //G4double zz = fColZ + fColSz + lconc;
     G4double zz = fColZ + lconc -fWallTh - fColSz;
     new G4PVPlacement(0,G4ThreeVector(offs,0,zz),lcbx3,
@@ -1011,8 +999,8 @@ void DetectorConstruction::BeamMonitor()
   flogBM = new G4LogicalVolume(bmbx,fScMatList[fBMmat-1],
 			       "lbmbx",0,0,0);
   auto logBMcase = new G4LogicalVolume(bmcase,fAl,"lbmcase",0,0,0);
-  flogBM->SetVisAttributes(black);
-  logBMcase->SetVisAttributes(black);
+  flogBM->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+  logBMcase->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   new G4PVPlacement(0,G4ThreeVector(fBMx,fBMy,fBMz),flogBM,
 		      "pbmbx",fExpLog,false,40);
   new G4PVPlacement(xR,G4ThreeVector(fBMx,fBMy,fBMz),logBMcase,
@@ -1041,7 +1029,7 @@ void DetectorConstruction::EMMAshield()
   // Table top
   auto tab = new G4Box("Table",fTabSx,fTabSy,fTabSz);
   auto ltab = new G4LogicalVolume(tab,fAl,"ltab",0,0,0);
-  ltab->SetVisAttributes(black);
+  ltab->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   new G4PVPlacement(0,G4ThreeVector(fTabX,fTabY,fTabZ),ltab,
 		      "pTab",fExpLog,false,0);
   if(fShL1 > 0){
@@ -1051,8 +1039,8 @@ void DetectorConstruction::EMMAshield()
     auto lbxO = new G4LogicalVolume(bxO,fAl,"lbxO",0,0,0);
     auto lbxI = new G4LogicalVolume(bxI,fAir,"lbxI",0,0,0);
     new G4PVPlacement(0,G4ThreeVector(0,0,0),lbxI,"pbxI",lbxO,false,0);
-    lbxO->SetVisAttributes(black);
-    lbxI->SetVisAttributes(black);
+    lbxO->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+    lbxI->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     //
     auto bxA = new G4Box("ShA",ha,thab,wab);
     auto bxB = new G4Box("ShB",hb,wab,thab);
@@ -1064,11 +1052,11 @@ void DetectorConstruction::EMMAshield()
     auto lbxC = new G4LogicalVolume(bxC,fMB,"lbxC",0,0,0);
     auto lbxD = new G4LogicalVolume(bxD,fMB,"lbxD",0,0,0);
     auto lbxE = new G4LogicalVolume(bxE,fMB,"lbxE",0,0,0);
-    lbxA->SetVisAttributes(black);
-    lbxB->SetVisAttributes(black);
-    lbxC->SetVisAttributes(black);
-    lbxD->SetVisAttributes(black);
-    lbxE->SetVisAttributes(black);
+    lbxA->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+    lbxB->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+    lbxC->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+    lbxD->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+    lbxE->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     new G4PVPlacement(0,G4ThreeVector(xa,-d0+fTabY,fTabZ),lbxA,"pbxA",fExpLog,false,0);
     new G4PVPlacement(0,G4ThreeVector(xb,fTabY,fTabZ-d0),lbxB,"pbxB",fExpLog,false,0);
     new G4PVPlacement(0,G4ThreeVector(xc,d0+fTabY,fTabZ),lbxC,"pbxC",fExpLog,false,0);
@@ -1093,7 +1081,7 @@ void DetectorConstruction::EMMAshield()
     //G4LogicalVolume* lshbm0 = new G4LogicalVolume(shbm0s,fB4C,"lshbm0",0,0,0);
     auto shbm0 = new G4Tubs("EMSh0",shsx,shsy,shsz,0.0,360.0*deg);
     auto lshbm0 = new G4LogicalVolume(shbm0,fCd,"lshbm0",0,0,0);
-    lshbm0->SetVisAttributes(black);
+    lshbm0->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     new G4PVPlacement(0,G4ThreeVector(0,0,0.5*fBMz),lshbm0,
 		      "BmShield",fExpLog,false,0);
   }
@@ -1111,7 +1099,7 @@ void DetectorConstruction::EMMAshield()
     //auto shbm2 = new G4Box("ShBox2",shsx,shsy,shsz);
     auto shbm2 = new G4Trap("ShBox2",fSh2sx,shsy,fSh2sz,fSh2sz1);
     auto lshbm2 = new G4LogicalVolume(shbm2,fMB,"lshbm2",0,0,0);
-    lshbm2->SetVisAttributes(black);
+    lshbm2->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     new G4PVPlacement(yR,G4ThreeVector(fSh2z,-fSh2x,0.5*fBMz),lshbm2,
 		      "BmShield2a",fExpLog,false,0);
     new G4PVPlacement(yR,G4ThreeVector(fSh2z,fSh2x,0.5*fBMz),lshbm2,
@@ -1133,7 +1121,7 @@ void DetectorConstruction::EMMAshield()
     G4Box* shbm1a = new G4Box("ShBox1a",shsx,shsy,shsz);
     G4SubtractionSolid* shbm1s = new G4SubtractionSolid("EMSh1",shbm1,shbm1a);
     G4LogicalVolume* lshbm1 = new G4LogicalVolume(shbm1s,fB4C,"lshbm1",0,0,0);
-    lshbm1->SetVisAttributes(black);
+    lshbm1->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
     new G4PVPlacement(0,G4ThreeVector(shpx,0,0),lshbm1,
 		      "BmShield1",fExpLog,false,0);
   }
@@ -1149,9 +1137,9 @@ void DetectorConstruction::EMMAHe3()
   flogHe3 = new G4LogicalVolume(he3Gas,fHe3Ar,"logHe3",0,0,0);
   flogT3 = new G4LogicalVolume(tube,fFe,"logT3",0,0,0);
   auto logWire = new G4LogicalVolume(wire,fW,"logWire",0,0,0);
-  flogT3->SetVisAttributes(black);
-  flogHe3->SetVisAttributes(blue);
-  logWire->SetVisAttributes(black);
+  flogT3->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
+  flogHe3->SetVisAttributes(G4VisAttributes(G4Colour::Blue()));
+  logWire->SetVisAttributes(G4VisAttributes(G4Colour::Black()));
   new G4PVPlacement(0,G4ThreeVector(0,0,0),logWire,"wireExp",flogHe3,false,999);
   new G4PVPlacement(0,G4ThreeVector(0,0,0),flogHe3,"gasExp",flogT3,false,1001);
   auto xR = new G4RotationMatrix;
@@ -1177,7 +1165,7 @@ void DetectorConstruction::HSpacer()
   auto hbx = new G4SubtractionSolid("hbx",bx1,bx2,0,G4ThreeVector(-dx,dy,0));
   auto hbx1 = new G4SubtractionSolid("hbx1",hbx,bx2,0,G4ThreeVector(-dx,-dy,0));
   flogHsp = new G4LogicalVolume(hbx1,fAl2O3,"logHsp",0,0,0);
-  flogHsp->SetVisAttributes(red);
+  flogHsp->SetVisAttributes(G4VisAttributes(G4Colour::Red()));
 }
 
 //----------------------------------------------------------------
