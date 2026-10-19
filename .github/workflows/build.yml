@@ -23,7 +23,7 @@ jobs:
       - name: Configure and build
         shell: bash
         run: |
-          set -euo pipefail
+          set -eo pipefail
           source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
           ./setup.sh
@@ -31,7 +31,7 @@ jobs:
       - name: Run 100-event smoke test
         shell: bash
         run: |
-          set -euo pipefail
+          set -eo pipefail
           source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
           output="${RUNNER_TEMP}/mg-ci-smoke.root"
@@ -42,7 +42,7 @@ jobs:
       - name: Render detector visualization directly to PDF
         shell: bash
         run: |
-          set -euo pipefail
+          set -eo pipefail
           source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
           rm -f detector-visualization.pdf
