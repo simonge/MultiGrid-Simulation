@@ -1,0 +1,2 @@
+# Python bridge package; Geant4 and ROOT are provided by the system installation.
+ncrystal-geant4==0.1.0
