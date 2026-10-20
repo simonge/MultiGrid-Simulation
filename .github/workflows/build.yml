@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-smoke-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
           # Pin to Ubuntu's system Python before LCG prepends its own Python to PATH.
           export MG_PYTHON=/usr/bin/python3
           "${MG_PYTHON}" -c 'import ssl'
-          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
+          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2404-gcc13-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
           ./setup.sh
 
@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           set -eo pipefail
-          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
+          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2404-gcc13-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
           output="${RUNNER_TEMP}/mg-ci-smoke.root"
           rm -f "${output}"
@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           set -eo pipefail
-          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
+          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2404-gcc13-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
           rm -f detector-visualization.pdf
           ./build/MG --geometry macros/EMMAtest0.dat --macro macros/ci-visualization.mac

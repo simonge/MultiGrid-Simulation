@@ -113,4 +113,4 @@ The script exports Geant4 geometry to a temporary GDML file, imports it with ROO
 
 ## GitHub Actions
 
-The workflow in `.github/workflows/build.yml` builds MG, runs a 100-event `EMMAtest0` smoke test, and renders the detector headlessly to `detector-visualization.pdf` using Geant4's ToolsSG off-screen driver. The PDF is uploaded as a workflow artifact. It uses the LCG view and CVMFS data paths above, so it requires a self-hosted GitHub Actions runner with CVMFS mounted and the `self-hosted`, `linux`, `x64`, and `lcg-110` labels. It is not configured for GitHub-hosted runners.
+The workflow in `.github/workflows/build.yml` builds MG, runs a 100-event `EMMAtest0` smoke test, and renders the detector headlessly to `detector-visualization.pdf` using Geant4's ToolsSG off-screen driver. The PDF is uploaded as a workflow artifact. It uses a GitHub-hosted Ubuntu 24.04 runner and installs CVMFS to load `LCG_110/x86_64-ubuntu2404-gcc13-opt`, with the Geant4 data path above. The runner OS must match the LCG view's target OS; loading the Ubuntu 26.04 development view on Ubuntu 24.04 can fail because its binaries require newer system libraries such as OpenSSL.
