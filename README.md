@@ -113,4 +113,8 @@ The script exports Geant4 geometry to a temporary GDML file, imports it with ROO
 
 ## GitHub Actions
 
-The workflow in `.github/workflows/build.yml` builds MG, runs a 100-event `EMMAtest0` smoke test, and renders the detector headlessly to `detector-visualization.pdf` using Geant4's ToolsSG off-screen driver. The PDF is uploaded as a workflow artifact. It uses the LCG view and CVMFS data paths above, so it requires a self-hosted GitHub Actions runner with CVMFS mounted and the `self-hosted`, `linux`, `x64`, and `lcg-110` labels. It is not configured for GitHub-hosted runners.
+The workflow in `.github/workflows/build.yml` builds MG, runs a 100-event `EMMAtest0` smoke test, and renders the detector headlessly to `detector-visualization.pdf` using Geant4's ToolsSG off-screen driver. The PDF is uploaded as a workflow artifact.
+
+It runs in the public [AIDASoft Ubuntu 24.04 image](https://github.com/AIDASoft/management), pinned by digest in the workflow. This supplies LCG's system dependencies, including X11, Motif, and OpenGL, instead of maintaining a graphics package list on the GitHub runner. Only `python3-venv` is installed at job runtime for `setup.sh`.
+
+The container is an OS-dependency image, not a standalone ROOT/Geant4 distribution: CVMFS is still mounted read-only to load the prebuilt `LCG_110/x86_64-ubuntu2404-gcc13-opt` stack and Geant4 data paths above. Build, smoke test, and rendering share one container and shell so the environment is initialized only once. The PDF is written to the mounted checkout for artifact upload; the smoke-test ROOT file is temporary inside the container. Keep the container OS and LCG platform matched when updating them, and validate both simulation and PDF rendering when changing the image digest.

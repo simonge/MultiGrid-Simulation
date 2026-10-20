@@ -4,9 +4,12 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-and-smoke-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -18,39 +21,44 @@ jobs:
       - name: Verify CVMFS
         run: |
           ls /cvmfs
-          cvmfs_config probe
+          cvmfs_config probe sft.cern.ch
+          cvmfs_config probe geant4.cern.ch
 
-      - name: Configure and build
+      - name: Build, smoke test, and render visualization
         shell: bash
         run: |
           set -eo pipefail
+          docker run --rm -i \
+            --volume "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}" \
+            --volume /cvmfs:/cvmfs:ro,rslave \
+            --workdir "${GITHUB_WORKSPACE}" \
+            ghcr.io/aidasoft/ubuntu2404@sha256:4e0c0a5e10427422072ddc764c7b6826292fcd39e2f8a913fbe28b8b4d4880ba \
+            /bin/bash -eo pipefail <<'BASH'
+          apt-get update
+          apt-get install -y --no-install-recommends python3-venv
           # Pin to Ubuntu's system Python before LCG prepends its own Python to PATH.
           export MG_PYTHON=/usr/bin/python3
           "${MG_PYTHON}" -c 'import ssl'
-          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
+          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2404-gcc13-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
-          ./setup.sh
 
-      - name: Run 100-event smoke test
-        shell: bash
-        run: |
-          set -eo pipefail
-          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
-          export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
-          output="${RUNNER_TEMP}/mg-ci-smoke.root"
+          echo "::group::Configure and build"
+          ./setup.sh
+          echo "::endgroup::"
+
+          echo "::group::Run 100-event smoke test"
+          output=/tmp/mg-ci-smoke.root
           rm -f "${output}"
           ./build/MG --preset EMMAtest0 --output "${output}"
           test -s "${output}"
+          echo "::endgroup::"
 
-      - name: Render detector visualization directly to PDF
-        shell: bash
-        run: |
-          set -eo pipefail
-          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
-          export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
+          echo "::group::Render detector visualization directly to PDF"
           rm -f detector-visualization.pdf
           ./build/MG --geometry macros/EMMAtest0.dat --macro macros/ci-visualization.mac
           test -s detector-visualization.pdf
+          echo "::endgroup::"
+          BASH
 
       - name: Upload detector visualization PDF
         if: always()
