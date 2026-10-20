@@ -24,6 +24,9 @@ jobs:
         shell: bash
         run: |
           set -eo pipefail
+          # Pin to Ubuntu's system Python before LCG prepends its own Python to PATH.
+          export MG_PYTHON=/usr/bin/python3
+          "${MG_PYTHON}" -c 'import ssl'
           source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2604-gcc15-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
           ./setup.sh
