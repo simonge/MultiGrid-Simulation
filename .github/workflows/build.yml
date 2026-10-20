@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-and-smoke-test:
     runs-on: ubuntu-24.04
