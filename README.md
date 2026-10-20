@@ -1,6 +1,29 @@
 # MG Geant4 Simulation
 
-MG is a Geant4 simulation of the ESS Multigrid detector. It uses Geant4 for particle transport, ROOT for output, and NCrystalGeant4 for crystal-material support.
+MG is a Geant4 simulation of the European Spallation Source (ESS) Multigrid neutron detector. Its purpose is to model particle transport through the detector and surrounding geometry, and to study the detector response to neutron beams and other particles, including scattering and energy deposition. Configurable geometries and source/run settings are supplied through parameter files and Geant4 macros. NCrystalGeant4 provides crystal-material support for simulations that use crystalline materials.
+
+## What the simulation tracks
+
+MG transports particles using Geant4 and records accepted steps in its sensitive detector volumes. These include Multigrid Ar/CO$_2$ detector gas, optional $^3$He detector volumes, sample/scattering volumes, the beam monitor, and selected test or surrounding-gas regions. The sensitive-detector code applies volume-specific filters: for example, gas hits with zero energy deposition are generally discarded, while sample hits are selected using neutron and volume-boundary conditions. A recorded row is therefore a detector hit/step, not a complete record of every Geant4 step in the simulation.
+
+For each event with at least one accepted hit, MG writes one entry to a ROOT `TTree` named `PD`. The entry has event-level primary-beam fields plus variable-length hit arrays:
+
+| Branch | Contents |
+| --- | --- |
+| `PD_Nhits` | Number of accepted hits recorded for the event; also the length of the hit arrays. |
+| `PD_T0n`, `PD_E0n` | Source neutron time-of-flight and energy values supplied by the primary generator. Their interpretation depends on the configured source mode. |
+| `PD_pdg` | Hit particle PDG code. |
+| `PD_vid` | Detector voxel, cell, sample, or monitor identifier, depending on the sensitive volume. |
+| `PD_m` | Particle rest mass. |
+| `PD_t` | Global hit time. |
+| `PD_x`, `PD_y`, `PD_z` | Hit position. |
+| `PD_vx`, `PD_vy`, `PD_vz` | Primary vertex position associated with the event. |
+| `PD_px`, `PD_py`, `PD_pz` | Particle momentum components at the hit. |
+| `PD_th`, `PD_ph`, `PD_p` | Momentum direction angles and magnitude. |
+| `PD_E` | Particle kinetic energy at the hit, as recorded by the sensitive detector. |
+| `PD_Ed` | Energy deposited at the hit. |
+
+The position, time, and energy quantities are stored in Geant4's internal units (typically mm, ns, and MeV). Momentum components and mass are explicitly converted to MeV-based units in the hit code. Events with zero accepted hits do not create `PD` tree entries, so the tree contains hit-bearing events rather than a complete event-by-event count. ROOT files are intended for later analysis and plotting; the `output/` directory contains analysis programs and examples.
 
 ## Dependencies
 
