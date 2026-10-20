@@ -27,9 +27,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libx11-dev libxmu-dev libgl1-mesa-dev libglu1-mesa-dev
+            libx11-dev libxmu-dev libmotif-dev libgl1-mesa-dev libglu1-mesa-dev
 
-      - name: Configure and build
+      - name: Build, smoke test, and render visualization
         shell: bash
         run: |
           set -eo pipefail
@@ -38,28 +38,23 @@ jobs:
           "${MG_PYTHON}" -c 'import ssl'
           source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2404-gcc13-opt/setup.sh
           export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
-          ./setup.sh
 
-      - name: Run 100-event smoke test
-        shell: bash
-        run: |
-          set -eo pipefail
-          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2404-gcc13-opt/setup.sh
-          export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
+          echo "::group::Configure and build"
+          ./setup.sh
+          echo "::endgroup::"
+
+          echo "::group::Run 100-event smoke test"
           output="${RUNNER_TEMP}/mg-ci-smoke.root"
           rm -f "${output}"
           ./build/MG --preset EMMAtest0 --output "${output}"
           test -s "${output}"
+          echo "::endgroup::"
 
-      - name: Render detector visualization directly to PDF
-        shell: bash
-        run: |
-          set -eo pipefail
-          source /cvmfs/sft.cern.ch/lcg/views/LCG_110/x86_64-ubuntu2404-gcc13-opt/setup.sh
-          export G4PARTICLEHPDATA=/cvmfs/geant4.cern.ch/share/data/G4TENDL1.4
+          echo "::group::Render detector visualization directly to PDF"
           rm -f detector-visualization.pdf
           ./build/MG --geometry macros/EMMAtest0.dat --macro macros/ci-visualization.mac
           test -s detector-visualization.pdf
+          echo "::endgroup::"
 
       - name: Upload detector visualization PDF
         if: always()
